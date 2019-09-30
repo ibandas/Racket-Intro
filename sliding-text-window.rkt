@@ -74,6 +74,14 @@ Below is a helper function that should do the trick on all
 platforms (but will look best on a Mac)
 |#
 
+;Background
+(define BACKGROUND (empty-scene 350 50))
+
+;DefaultWorldState at 0
+(define WORLD0 0)
+; start : World -> World
+
+
 ; monospaced-text : String -> Image
 ; the body of this function uses something called a "symbol"
 ; it is a lot like a string, except it begins with a ' mark
@@ -83,5 +91,35 @@ platforms (but will look best on a Mac)
   (text/font str
              36
              "black"
-             "Menlo" 'modern
+             "Monospace" 'modern
              'normal 'normal #f))
+
+;Breaks the string into a list of strings of 1 character
+;Then it appends three letters together
+;And it iterates through the string as the clock ticks
+(define (cut-message str num)
+  (string-append 
+   (list-ref (explode str) num)
+   (list-ref (explode str) (+ 1 num))
+   (list-ref (explode str) (+ 2 num))))
+
+; Dynamic scene that changes using cut-message
+(define (calc-scene num)
+  (overlay (monospaced-text (cut-message A-MESSAGE num)) BACKGROUND))
+
+; Renders the current world by calling calc-scene
+(define (render world)
+  (calc-scene world))
+
+;Adds a value of 1 to the WorldState
+(define (update-world uw)
+  (+ uw 1))
+
+; World -> World
+(define (start initial-world)
+  (big-bang initial-world
+    [to-draw render]
+    [on-tick update-world 2]))
+
+; Starts the World
+(start WORLD0)
