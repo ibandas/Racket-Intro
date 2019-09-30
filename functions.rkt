@@ -19,7 +19,10 @@ Use the formula to design a function that computes a taxi fare given
 the distance traveled.
 |#
 
-(check-expect (+ 3.05 (* 0.5 0.180)) 3.14)
+(define (fare_calc miles)(+ 3.05 (* 1.80 miles)))
+(check-expect (fare_calc 0.5) 3.95)
+(check-expect (fare_calc 1.0) 4.85)
+(check-expect (fare_calc 2.0) 6.65)
 
 
 #|
@@ -42,6 +45,10 @@ Use the formula to design a function that computes my snow shoveling
 income given both the number of inches and number of neighbors.
 |#
 
-(check-expect (* 4 (+ 10 (* 14 5)))
+; ($10 * Neighbor) + ($5 * Snowfall * Neighbor)
+(define (shovel_job neighbor snowfall)(+ (* 10 neighbor)(* (* 5 snowfall) neighbor)))
+(check-expect (shovel_job 4 14)
               (+ (* 4 10) (* 4 14 5)))
+(check-expect (shovel_job 2 5)
+              (+ (* 2 10) (* 2 5 5)))
 
