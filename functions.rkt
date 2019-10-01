@@ -74,7 +74,7 @@ income given both the number of inches and number of neighbors.
 ;; 5        3             105
 ;; 7        2             90
 (define (shovel_job neighbor snowfall)
-  (+ (* 10 neighbor) (* (* 5 snowfall) neighbor)))
+  (+ (* 10 neighbor) (* 5 snowfall neighbor)))
 
 ;;EXAMPLES
 (check-expect (shovel_job 4 14)
