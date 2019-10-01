@@ -78,9 +78,8 @@ platforms (but will look best on a Mac)
 (define BACKGROUND (empty-scene 350 50))
 
 ;DefaultWorldState at 0
-(define WORLD0 0)
+(define WORLD0 2)
 ; start : World -> World
-
 
 ; monospaced-text : String -> Image
 ; the body of this function uses something called a "symbol"
@@ -98,28 +97,41 @@ platforms (but will look best on a Mac)
 ;Then it appends three letters together
 ;And it iterates through the string as the clock ticks
 (define (cut-message str num)
-  (string-append 
-   (list-ref (explode str) num)
-   (list-ref (explode str) (+ 1 num))
-   (list-ref (explode str) (+ 2 num))))
+  (cond
+    [(= num (string-length str))(string-append 
+   (list-ref (explode str) (- num 2))
+   (list-ref (explode str) (- num 1))
+   (list-ref (explode str) (- num (string-length str))))]
+    [(= num (+ 1 (string-length str)))(string-append 
+   (list-ref (explode str) (- num 2))
+   (list-ref (explode str) (- num (+ 1 (string-length str))))
+   (list-ref (explode str) (- num (string-length str))))]
+    [else (string-append 
+   (list-ref (explode str) (- num 2))
+   (list-ref (explode str) (- num 1))
+   (list-ref (explode str) num))]))
 
 ; Dynamic scene that changes using cut-message
-(define (calc-scene num)
-  (overlay (monospaced-text (cut-message A-MESSAGE num)) BACKGROUND))
+(define (calc-scene str num)
+  (overlay (monospaced-text (cut-message str num)) BACKGROUND))
 
 ; Renders the current world by calling calc-scene
 (define (render world)
-  (calc-scene world))
+  (calc-scene ANOTHER-MESSAGE world))
 
 ;Adds a value of 1 to the WorldState
 (define (update-world uw)
-  (+ uw 1))
+  (cond
+    [(= uw (+ (string-length ANOTHER-MESSAGE) 1)) (- uw (- (string-length ANOTHER-MESSAGE) 1))]
+    [else (+ uw 1)]))
+
 
 ; World -> World
 (define (start initial-world)
   (big-bang initial-world
     [to-draw render]
-    [on-tick update-world 2]))
+    [on-tick update-world .5]))
+
 
 ; Starts the World
 (start WORLD0)
