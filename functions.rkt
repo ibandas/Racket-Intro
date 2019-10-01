@@ -19,10 +19,23 @@ Use the formula to design a function that computes a taxi fare given
 the distance traveled.
 |#
 
-(define (fare_calc miles)(+ 3.05 (* 1.80 miles)))
-(check-expect (fare_calc 0.5) 3.95)
-(check-expect (fare_calc 1.0) 4.85)
-(check-expect (fare_calc 2.0) 6.65)
+;; calculate-fare: number -> number
+;; to calculate the given taxi fare
+;;  TABLE
+;;  DISTANCE      FARE
+;;  0.5 mi        3.95 
+;;  1 mi          4.85
+;;  1.5 mi        5.75
+;;  2 mi          6.65
+;;  2.5 mi        7.55
+;;  3 mi          8.45
+(define (calculate-fare miles)
+  (+ 3.05 (* 1.80 miles)))
+
+;;EXAMPLES
+(check-expect (calculate-fare 0.5) 3.95)
+(check-expect (calculate-fare 1.0) 4.85)
+(check-expect (calculate-fare 2.0) 6.65)
 
 
 #|
@@ -46,9 +59,28 @@ income given both the number of inches and number of neighbors.
 |#
 
 ; ($10 * Neighbor) + ($5 * Snowfall * Neighbor)
-(define (shovel_job neighbor snowfall)(+ (* 10 neighbor)(* (* 5 snowfall) neighbor)))
+
+;; shovel_job: number -> number
+;; to calculate the cost of shoveling snow
+;;  TABLE
+;; INCHES   NEIGHBOURS    INCOME
+;; 2        1             20
+;; 4        2             60            
+;; 6        6             240
+;; 8        2             100
+;; 10       4             240
+;; 12       5             350
+;; 3        1             25
+;; 5        3             105
+;; 7        2             90
+(define (shovel_job neighbor snowfall)
+  (+ (* 10 neighbor) (* (* 5 snowfall) neighbor)))
+
+;;EXAMPLES
 (check-expect (shovel_job 4 14)
               (+ (* 4 10) (* 4 14 5)))
+
 (check-expect (shovel_job 2 5)
               (+ (* 2 10) (* 2 5 5)))
 
+(check-expect (shovel_job 1 2) 20)
