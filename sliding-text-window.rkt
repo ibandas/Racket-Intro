@@ -61,7 +61,7 @@ number is allowed.
 (require 2htdp/image)
 (require 2htdp/universe)
 
-;; Some example messages:
+;; defines some example messages:
 (define A-MESSAGE       "Welcome to IPD!")
 (define ANOTHER-MESSAGE "This message should work, too. ")
 
@@ -77,9 +77,9 @@ platforms (but will look best on a Mac)
 ;Background
 (define BACKGROUND (empty-scene 350 50))
 
-;DefaultWorldState at 0
+;DefaultWorldState at 2
 (define WORLD0 2)
-; start : World -> World
+
 
 ; monospaced-text : String -> Image
 ; the body of this function uses something called a "symbol"
@@ -93,45 +93,54 @@ platforms (but will look best on a Mac)
              "Monospace" 'modern
              'normal 'normal #f))
 
-;Breaks the string into a list of strings of 1 character
-;Then it appends three letters together
-;And it iterates through the string as the clock ticks
+;; cut-message : string number -> string
+;; Breaks the string into a list of strings of 1 character
+;; Then it appends three letters together
+;; And it iterates through the string as the clock ticks
+
 (define (cut-message str num)
   (cond
-    [(= num (string-length str))(string-append 
-   (list-ref (explode str) (- num 2))
-   (list-ref (explode str) (- num 1))
-   (list-ref (explode str) (- num (string-length str))))]
-    [(= num (+ 1 (string-length str)))(string-append 
-   (list-ref (explode str) (- num 2))
-   (list-ref (explode str) (- num (+ 1 (string-length str))))
-   (list-ref (explode str) (- num (string-length str))))]
-    [else (string-append 
-   (list-ref (explode str) (- num 2))
-   (list-ref (explode str) (- num 1))
-   (list-ref (explode str) num))]))
+    [(= num (string-length str))
+     (string-append 
+      (list-ref (explode str) (- num 2))
+      (list-ref (explode str) (- num 1))
+      (list-ref (explode str) (- num (string-length str))))]
+    [(= num (+ 1 (string-length str)))
+     (string-append 
+      (list-ref (explode str) (- num 2))
+      (list-ref (explode str) (- num (+ 1 (string-length str))))
+      (list-ref (explode str) (- num (string-length str))))]
+    [else
+     (string-append 
+      (list-ref (explode str) (- num 2))
+      (list-ref (explode str) (- num 1))
+      (list-ref (explode str) num))]
+    ))
 
-; Dynamic scene that changes using cut-message
+;; calc-scene : string number -> image
+;; Dynamic scene that changes using cut-message
 (define (calc-scene str num)
   (overlay (monospaced-text (cut-message str num)) BACKGROUND))
 
-; Renders the current world by calling calc-scene
+;; render : World -> World
+;; Renders the current world by calling calc-scene
 (define (render world)
-  (calc-scene ANOTHER-MESSAGE world))
+  (calc-scene A-MESSAGE world))
 
-;Adds a value of 1 to the WorldState
+;; update-world: World -> World
+;; Adds a value of 1 to the WorldState
 (define (update-world uw)
   (cond
-    [(= uw (+ (string-length ANOTHER-MESSAGE) 1)) (- uw (- (string-length ANOTHER-MESSAGE) 1))]
+    [(= uw (+ (string-length A-MESSAGE) 1)) (- uw (- (string-length A-MESSAGE) 1))]
     [else (+ uw 1)]))
 
-
-; World -> World
+;; start: World -> World
+;; a big-bang function which uses to-draw to render the current world
+;; on-tick to update-world to change the string dynamically
 (define (start initial-world)
   (big-bang initial-world
     [to-draw render]
     [on-tick update-world .5]))
-
 
 ; Starts the World
 (start WORLD0)
