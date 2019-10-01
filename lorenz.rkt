@@ -16,6 +16,8 @@ them into BSL. (If you are not familiar with differential equations,
 don’t worry; the assignment explains how to use them.)
 
 |#
+(require 2htdp/image)
+(require 2htdp/universe)
 
 
 (define SIGMA 10)  ; σ
@@ -54,7 +56,84 @@ don’t worry; the assignment explains how to use them.)
 (define (next-z x y z)
   (+ z (* TIME-STEP (- (* x y) (* BETA z)))))
 
+(define RADIUS 2)
+(define DOT (circle RADIUS "solid" "red"))
+(define-struct dot [circle x y z])
 
+; Point -> Point
+(define (update-point up)
+  (make-dot
+   DOT
+   (next-x (dot-x up)
+           (dot-y up)
+           (dot-z up))
+   (next-y (dot-x up)
+           (dot-y up)
+           (dot-z up))
+   (next-z (dot-x up)
+           (dot-y up)
+           (dot-z up))))
+
+(define POINT1 (make-dot DOT 1 1 1))
+(define POINT2 (update-point POINT1))
+(define POINT3 (update-point POINT2))
+(define POINT4 (update-point POINT3))
+
+(define-struct lorenz [point1 point2 point3 point4])
+(define WORLD (make-lorenz POINT1 POINT2 POINT3 POINT4))
+
+(define BACKGROUND (empty-scene 600 600))
+
+;Places the image with the current coordinates
+(define (render world)
+  (draw-dots (lorenz-point1 world)
+             (lorenz-point2 world)
+             (lorenz-point3 world)
+             (lorenz-point4 world)))
+
+
+(define (draw-dots point1 point2 point3 point4)
+  (add-line
+   (add-line
+    (add-line
+     (place-images
+      (list (dot-circle point1)
+            (dot-circle point2)
+            (dot-circle point3)
+            (dot-circle point4))
+      (list (make-posn (+ 300 (* 10 (dot-x point1))) (+ 300 (* 10 (dot-y point1))))
+            (make-posn (+ 300 (* 10 (dot-x point2))) (+ 300 (* 10 (dot-y point2))))
+            (make-posn (+ 300 (* 10 (dot-x point3))) (+ 300 (* 10 (dot-y point3))))
+            (make-posn (+ 300 (* 10 (dot-x point4))) (+ 300 (* 10 (dot-y point4)))))
+      BACKGROUND)
+     (+ 300 (* 10 (dot-x point1))) (+ 300 (* 10 (dot-y point1))) (+ 300 (* 10 (dot-x point2))) (+ 300 (* 10 (dot-y point2))) "black")
+    (+ 300 (* 10 (dot-x point2))) (+ 300 (* 10 (dot-y point2))) (+ 300 (* 10 (dot-x point3))) (+ 300 (* 10 (dot-y point3))) "black")
+   (+ 300 (* 10 (dot-x point3))) (+ 300 (* 10 (dot-y point3))) (+ 300 (* 10 (dot-x point4))) (+ 300 (* 10 (dot-y point4))) "black"))
+
+         
+
+; World -> World
+(define (update-world uw)
+  (update-lorenz uw))
+
+
+(define (update-lorenz ul)
+  (make-lorenz (update-point (lorenz-point1 ul))
+               (update-point (lorenz-point2 ul))
+               (update-point (lorenz-point3 ul))
+               (update-point (lorenz-point4 ul))))
+
+
+
+; World -> World
+(define (start initial-world)
+  (big-bang initial-world
+    [to-draw render]
+    [on-tick update-world .1]))
+
+
+; Starts the World
+(start WORLD)
 
 #|
 
