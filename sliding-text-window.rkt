@@ -98,6 +98,9 @@ platforms (but will look best on a Mac)
 ;; Then it appends three letters together
 ;; And it iterates through the string as the clock ticks
 
+(check-expect (cut-message A-MESSAGE 2) "Wel")
+(check-expect (cut-message A-MESSAGE (string-length A-MESSAGE)) "D!W")
+(check-expect (cut-message A-MESSAGE (+ 1 (string-length A-MESSAGE))) "!We")
 (define (cut-message str num)
   (cond
     [(= num (string-length str))
@@ -129,6 +132,12 @@ platforms (but will look best on a Mac)
 
 ;; update-world: World -> World
 ;; Adds a value of 1 to the WorldState
+;; whenever the WorldState is not equal to 1 + the length of string being put in,
+;; otherwise it will substract one less than the length of the string to
+;; bring the WorldState back to it's initial value of 2
+(check-expect (update-world 3) 4)
+(check-expect (update-world 10) 11)
+(check-expect (update-world (+ (string-length A-MESSAGE) 1)) 2)
 (define (update-world uw)
   (cond
     [(= uw (+ (string-length A-MESSAGE) 1)) (- uw (- (string-length A-MESSAGE) 1))]
