@@ -143,4 +143,4 @@ platforms (but will look best on a Mac)
     [on-tick update-world .5]))
 
 ; Starts the World
-(start WORLD0)
+; (start WORLD0)

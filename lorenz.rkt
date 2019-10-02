@@ -56,11 +56,21 @@ don’t worry; the assignment explains how to use them.)
 (define (next-z x y z)
   (+ z (* TIME-STEP (- (* x y) (* BETA z)))))
 
+; Constants
 (define RADIUS 2)
 (define DOT (circle RADIUS "solid" "red"))
+
+; Defines a struct named "dot"
+; "dot" takes in a image(circle), number, number, number
+; x y z are used for position
 (define-struct dot [circle x y z])
 
-; Point -> Point
+; dot -> dot
+; this function creates a new dot with the same constant image (DOT)
+; but with new values that it computes for x, y, and z
+; using next-x, next-y, and next-z
+; EXAMPLE: (1, 1, 1) -> (1, #i1.26, #i0.98)
+; EXAMPLE: (1, #i1.26, #i0.98) -> (#i1.026, #i1.517, #i0.970)
 (define (update-point up)
   (make-dot
    DOT
@@ -74,24 +84,38 @@ don’t worry; the assignment explains how to use them.)
            (dot-y up)
            (dot-z up))))
 
+; More Constants
+; This was defined strategically below the "update-point" function
+; POINT2 is created based off of POINT1
+; POINT3 is created based off of POINT2
+; POINT4 is created based off of POINT3
 (define POINT1 (make-dot DOT 1 1 1))
 (define POINT2 (update-point POINT1))
 (define POINT3 (update-point POINT2))
 (define POINT4 (update-point POINT3))
 
+; Defines a struct named "lorenz"
+; lorenz takes in four dots
+; lorenz also becomes the world state
 (define-struct lorenz [point1 point2 point3 point4])
+
+; Initial-World takes in a lorenz which is composed of four dots
 (define WORLD (make-lorenz POINT1 POINT2 POINT3 POINT4))
 
+; Empty scene to place lorenz model on
 (define BACKGROUND (empty-scene 600 600))
 
-;Places the image with the current coordinates
+; render : Lorenz-Model (World) -> Scene
+; Places the image with the current coordinates
+; by calling the draw-dots function which uses
+; the current four points of the world, or lorenz structure.
 (define (render world)
   (draw-dots (lorenz-point1 world)
              (lorenz-point2 world)
              (lorenz-point3 world)
              (lorenz-point4 world)))
 
-
+; 
 (define (draw-dots point1 point2 point3 point4)
   (add-line
    (add-line
@@ -133,7 +157,7 @@ don’t worry; the assignment explains how to use them.)
 
 
 ; Starts the World
-(start WORLD)
+; (start WORLD)
 
 #|
 

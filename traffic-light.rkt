@@ -121,5 +121,5 @@ traffic light that cycles appropriately.
     [on-tick update-world 3]))
 
 ;; starts the test with the initial world state
-(start FS-WORLD0)
+; (start FS-WORLD0)
 
