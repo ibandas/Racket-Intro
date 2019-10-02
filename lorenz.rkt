@@ -64,13 +64,14 @@ don’t worry; the assignment explains how to use them.)
 ; "dot" takes in a image(circle), number, number, number
 ; x y z are used for position
 (define-struct dot [circle x y z])
+(define POINT1 (make-dot DOT 1 1 1))
 
 ; dot -> dot
 ; this function creates a new dot with the same constant image (DOT)
 ; but with new values that it computes for x, y, and z
 ; using next-x, next-y, and next-z
-; EXAMPLE: (1, 1, 1) -> (1, #i1.26, #i0.98)
-; EXAMPLE: (1, #i1.26, #i0.98) -> (#i1.026, #i1.517, #i0.970)
+(check-within (update-point POINT1) (make-dot DOT 1 #i1.26 #i0.983333) EPSILON)
+(check-within (update-point (make-dot DOT 1 #i1.26 #i0.983333)) (make-dot DOT #i1.026 #i1.517566 #i0.969710) EPSILON)
 (define (update-point up)
   (make-dot
    DOT
@@ -89,7 +90,6 @@ don’t worry; the assignment explains how to use them.)
 ; POINT2 is created based off of POINT1
 ; POINT3 is created based off of POINT2
 ; POINT4 is created based off of POINT3
-(define POINT1 (make-dot DOT 1 1 1))
 (define POINT2 (update-point POINT1))
 (define POINT3 (update-point POINT2))
 (define POINT4 (update-point POINT3))
@@ -115,7 +115,11 @@ don’t worry; the assignment explains how to use them.)
              (lorenz-point3 world)
              (lorenz-point4 world)))
 
-; 
+; draw-dots : Number Number Number Number -> Image
+; Takes in four dots and places them as points
+; while also connecting each point with a line.
+; Point 1 to Point 2 to Point 3 to Point 4
+; on a empty scene background
 (define (draw-dots point1 point2 point3 point4)
   (add-line
    (add-line
@@ -134,20 +138,26 @@ don’t worry; the assignment explains how to use them.)
     (+ 300 (* 10 (dot-x point2))) (+ 300 (* 10 (dot-y point2))) (+ 300 (* 10 (dot-x point3))) (+ 300 (* 10 (dot-y point3))) "black")
    (+ 300 (* 10 (dot-x point3))) (+ 300 (* 10 (dot-y point3))) (+ 300 (* 10 (dot-x point4))) (+ 300 (* 10 (dot-y point4))) "black"))
 
-         
-
-; World -> World
-(define (update-world uw)
-  (update-lorenz uw))
-
+; update-lorenz lorenz -> lorenz
+(check-within WORLD (make-lorenz  (make-dot DOT 1 1 1)
+                                  (make-dot DOT 1 #i1.26 #i0.983333)
+                                  (make-dot DOT #i1.026 #i1.517566 #i0.969710)
+                                  (make-dot DOT #i1.0751566000 #i1.7797211 #i0.9594212938)) EPSILON)
+; update-lorenz lorenz -> lorenz
+(check-within (update-lorenz WORLD) (make-lorenz  (make-dot DOT 1 #i1.26 #i0.983333)
+                                                  (make-dot DOT #i1.026 #i1.517566 #i0.969710)
+                                                  (make-dot DOT #i1.0751566000 #i1.7797211 #i0.9594212938)
+                                                  (make-dot DOT #i1.14561305 #i2.052652455637904 #i0.9529715148335759)) EPSILON)
 
 (define (update-lorenz ul)
   (make-lorenz (update-point (lorenz-point1 ul))
                (update-point (lorenz-point2 ul))
                (update-point (lorenz-point3 ul))
-               (update-point (lorenz-point4 ul))))
+               (update-point (lorenz-point4 ul))))         
 
-
+; update-world : CurrentWorld -> World
+(define (update-world uw)
+  (update-lorenz uw))
 
 ; World -> World
 (define (start initial-world)
