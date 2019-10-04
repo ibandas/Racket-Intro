@@ -80,6 +80,10 @@ platforms (but will look best on a Mac)
 ;DefaultWorldState at 2
 (define WORLD0 2)
 
+;; A SlidingTextWorld is a Natural in [2, (+ 1 (string-length A-MESSAGE))]
+ ; interp. 2 plus the index of the first shown character
+
+
 
 ; monospaced-text : String -> Image
 ; the body of this function uses something called a "symbol"
@@ -125,16 +129,16 @@ platforms (but will look best on a Mac)
 (define (calc-scene str num)
   (overlay (monospaced-text (cut-message str num)) BACKGROUND))
 
-;; render : World -> World
+;; render : SlidingTextWorld -> SlidingTextWorld
 ;; Renders the current world by calling calc-scene
 (define (render world)
   (calc-scene A-MESSAGE world))
 
-;; update-world: World -> World
-;; Adds a value of 1 to the WorldState
-;; whenever the WorldState is not equal to 1 + the length of string being put in,
+;; update-world: SlidingTextWorld -> SlidingTextWorld
+;; Adds a value of 1 to the SlidingTextWorld
+;; whenever the SlidingTextWorld is not equal to 1 + the length of string being put in,
 ;; otherwise it will substract one less than the length of the string to
-;; bring the WorldState back to it's initial value of 2
+;; bring the SlidingTextWorld back to it's initial value of 2
 (check-expect (update-world 3) 4)
 (check-expect (update-world 10) 11)
 (check-expect (update-world (+ (string-length A-MESSAGE) 1)) 2)
@@ -143,7 +147,7 @@ platforms (but will look best on a Mac)
     [(= uw (+ (string-length A-MESSAGE) 1)) (- uw (- (string-length A-MESSAGE) 1))]
     [else (+ uw 1)]))
 
-;; start: World -> World
+;; start: SlidingTextWorld -> SlidingTextWorld
 ;; a big-bang function which uses to-draw to render the current world
 ;; on-tick to update-world to change the string dynamically
 (define (start initial-world)
