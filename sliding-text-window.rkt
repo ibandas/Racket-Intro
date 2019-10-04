@@ -101,7 +101,6 @@ platforms (but will look best on a Mac)
 ;; Breaks the string into a list of strings of 1 character
 ;; Then it appends three letters together
 ;; And it iterates through the string as the clock ticks
-
 (check-expect (cut-message A-MESSAGE 2) "Wel")
 (check-expect (cut-message A-MESSAGE (string-length A-MESSAGE)) "D!W")
 (check-expect (cut-message A-MESSAGE (+ 1 (string-length A-MESSAGE))) "!We")
