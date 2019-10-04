@@ -1,6 +1,8 @@
 ;; The first three lines of this file were inserted by DrRacket. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
 #reader(lib "htdp-beginner-reader.ss" "lang")((modname traffic-light) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+; A SlidingTextWorld is a Natural in [2, (+ 1 (string-length A-MESSAGE))]
+ ; interp. 2 plus the index of the first shown character
 #|
 
 In Chicago, some traffic lights have, in addition to the
@@ -26,6 +28,13 @@ traffic light that cycles appropriately.
 (require 2htdp/image)
 (require 2htdp/universe)
 
+; A TrafficLightState is one of:
+ ; - "Red-Walk-Circle"
+ ; - "Orange-Sit-Circle"
+ ; - "Red-Sit-Circle"
+ ; - "Green-Walk-Circle"
+ ; - "Green-Sit-Circle"
+
 ;; the radius of the circle
 (define RADIUS 20)   
 
@@ -46,37 +55,32 @@ traffic light that cycles appropriately.
 ;; start : World -> World
 (define FS-WORLD0  "Red-Sit-Circle")
 
-;; Red-Sit-Scene : World -> World
 ;;Enumerations
 ;1st State
 (define Red-Sit-Scene
   (overlay No-Walk-Sign Red-Circle BACKGROUND))
 
-;; Red-Walk-Scene : World -> World
 ;; 2nd State 
 ;; Represents a Red and Walk combination
 (define Red-Walk-Scene
   (overlay Walk-Sign Red-Circle BACKGROUND))
 
-;; Green-Walk-Scene : World -> World
 ;; 3rd State
 ;; Represents a Green and Walk combo
 (define Green-Walk-Scene
   (overlay Walk-Sign Green-Circle BACKGROUND))
 
-;; Green-Sit-Scene : World -> World
 ;; 4th State 
 ;; Represents a Green & Don't Walk combination
 (define Green-Sit-Scene
   (overlay No-Walk-Sign Green-Circle BACKGROUND))
 
-;; Orange-Sit-Scene : World -> World
 ;; 5th State
 ;; represents an Orange and Don't Walk combination
 (define Orange-Sit-Scene
   (overlay No-Walk-Sign Orange-Circle BACKGROUND))
 
-;; render-circle: CurrentWorldState -> World
+;; render-circle: TrafficLightState -> Image
 ;; renders the current world state given the definition name
 ;; EXAMPLE
  (check-expect (render-circle "Red-Sit-Circle") (overlay No-Walk-Sign Red-Circle BACKGROUND))
@@ -85,7 +89,6 @@ traffic light that cycles appropriately.
  (check-expect (render-circle "Green-Sit-Circle") (overlay No-Walk-Sign Green-Circle BACKGROUND))
  (check-expect (render-circle "Orange-Sit-Circle") (overlay No-Walk-Sign Orange-Circle BACKGROUND))
  
-
 (define (render-circle world)
   (cond
     [(string=? world "Red-Sit-Circle")  Red-Sit-Scene]
@@ -94,7 +97,8 @@ traffic light that cycles appropriately.
     [(string=? world "Green-Sit-Circle")  Green-Sit-Scene]
     [(string=? world "Orange-Sit-Circle") Orange-Sit-Scene]))
 
-;; update-world: CurrentWorldState -> NextWorldState
+
+;; update-world: TrafficLightState -> TrafficLightState
 ;; on-tick function
 ;; changes WorldState every 3 seconds
 ;; EXAMPLE
