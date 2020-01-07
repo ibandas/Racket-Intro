@@ -61,7 +61,7 @@ number is allowed.
 (require 2htdp/image)
 (require 2htdp/universe)
 
-;; Some example messages:
+;; defines some example messages:
 (define A-MESSAGE       "Welcome to IPD!")
 (define ANOTHER-MESSAGE "This message should work, too. ")
 
@@ -77,9 +77,11 @@ platforms (but will look best on a Mac)
 ;Background
 (define BACKGROUND (empty-scene 350 50))
 
-;DefaultWorldState at 0
-(define WORLD0 0)
-; start : World -> World
+;DefaultWorldState at 2
+(define WORLD0 2)
+
+;; A SlidingTextWorld is a Natural in [2, (+ 1 (string-length A-MESSAGE))]
+ ; interp. 2 plus the index of the first shown character
 
 
 ; monospaced-text : String -> Image
@@ -94,32 +96,62 @@ platforms (but will look best on a Mac)
              "Monospace" 'modern
              'normal 'normal #f))
 
-;Breaks the string into a list of strings of 1 character
-;Then it appends three letters together
-;And it iterates through the string as the clock ticks
+;; cut-message : string number -> string
+;; Breaks the string into a list of strings of 1 character
+;; Then it appends three letters together
+;; And it iterates through the string as the clock ticks
+(check-expect (cut-message A-MESSAGE 2) "Wel")
+(check-expect (cut-message A-MESSAGE (string-length A-MESSAGE)) "D!W")
+(check-expect (cut-message A-MESSAGE (+ 1 (string-length A-MESSAGE))) "!We")
 (define (cut-message str num)
-  (string-append 
-   (list-ref (explode str) num)
-   (list-ref (explode str) (+ 1 num))
-   (list-ref (explode str) (+ 2 num))))
+  (cond
+    [(= num (string-length str))
+     (string-append 
+      (list-ref (explode str) (- num 2))
+      (list-ref (explode str) (- num 1))
+      (list-ref (explode str) (- num (string-length str))))]
+    [(= num (+ 1 (string-length str)))
+     (string-append 
+      (list-ref (explode str) (- num 2))
+      (list-ref (explode str) (- num (+ 1 (string-length str))))
+      (list-ref (explode str) (- num (string-length str))))]
+    [else
+     (string-append 
+      (list-ref (explode str) (- num 2))
+      (list-ref (explode str) (- num 1))
+      (list-ref (explode str) num))]
+    ))
 
-; Dynamic scene that changes using cut-message
-(define (calc-scene num)
-  (overlay (monospaced-text (cut-message A-MESSAGE num)) BACKGROUND))
+;; calc-scene : string number -> image
+;; Dynamic scene that changes using cut-message
+(define (calc-scene str num)
+  (overlay (monospaced-text (cut-message str num)) BACKGROUND))
 
-; Renders the current world by calling calc-scene
+;; render : SlidingTextWorld -> SlidingTextWorld
+;; Renders the current world by calling calc-scene
 (define (render world)
-  (calc-scene world))
+  (calc-scene A-MESSAGE world))
 
-;Adds a value of 1 to the WorldState
+;; update-world: SlidingTextWorld -> SlidingTextWorld
+;; Adds a value of 1 to the SlidingTextWorld
+;; whenever the SlidingTextWorld is not equal to 1 + the length of string being put in,
+;; otherwise it will substract one less than the length of the string to
+;; bring the SlidingTextWorld back to it's initial value of 2
+(check-expect (update-world 3) 4)
+(check-expect (update-world 10) 11)
+(check-expect (update-world (+ (string-length A-MESSAGE) 1)) 2)
 (define (update-world uw)
-  (+ uw 1))
+  (cond
+    [(= uw (+ (string-length A-MESSAGE) 1)) (- uw (- (string-length A-MESSAGE) 1))]
+    [else (+ uw 1)]))
 
-; World -> World
+;; start: SlidingTextWorld -> SlidingTextWorld
+;; a big-bang function which uses to-draw to render the current world
+;; on-tick to update-world to change the string dynamically
 (define (start initial-world)
   (big-bang initial-world
     [to-draw render]
-    [on-tick update-world 2]))
+    [on-tick update-world .5]))
 
 ; Starts the World
-(start WORLD0)
+; (start WORLD0)
