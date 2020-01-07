@@ -84,7 +84,6 @@ platforms (but will look best on a Mac)
  ; interp. 2 plus the index of the first shown character
 
 
-
 ; monospaced-text : String -> Image
 ; the body of this function uses something called a "symbol"
 ; it is a lot like a string, except it begins with a ' mark

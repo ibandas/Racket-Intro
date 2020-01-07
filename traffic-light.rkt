@@ -97,7 +97,6 @@ traffic light that cycles appropriately.
     [(string=? world "Green-Sit-Circle")  Green-Sit-Scene]
     [(string=? world "Orange-Sit-Circle") Orange-Sit-Scene]))
 
-
 ;; update-world: TrafficLightState -> TrafficLightState
 ;; on-tick function
 ;; changes WorldState every 3 seconds

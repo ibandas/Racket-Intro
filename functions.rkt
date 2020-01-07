@@ -59,7 +59,6 @@ income given both the number of inches and number of neighbors.
 |#
 
 ; ($10 * Neighbor) + ($5 * Snowfall * Neighbor)
-
 ;; shovel_job: number -> number
 ;; to calculate the cost of shoveling snow
 ;;  TABLE
@@ -79,6 +78,8 @@ income given both the number of inches and number of neighbors.
 ;;EXAMPLES
 (check-expect (shovel-job 4 14)
               (+ (* 4 10) (* 4 14 5)))
+(check-expect (shovel_job 2 5)
+              (+ (* 2 10) (* 2 5 5)))
 
 (check-expect (shovel-job 2 5)
               (+ (* 2 10) (* 2 5 5)))
